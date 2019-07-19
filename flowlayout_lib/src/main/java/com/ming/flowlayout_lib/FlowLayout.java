@@ -1,18 +1,15 @@
 package com.ming.flowlayout_lib;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FlowLayout extends RelativeLayout {
+public class FlowLayout extends ViewGroup {
     //item
     private View itemView;
     //水平间距
@@ -32,7 +29,9 @@ public class FlowLayout extends RelativeLayout {
     //item选择监听
     private OnItemSelectLisenter onItemSelectLisenter;
     //item选择集合
-    List<Integer> selectList;
+    private List<Integer> selectList;
+    //adapter
+    private FlowlayoutAdapter flowlayoutAdapter;
     private Context context;
 
     public FlowLayout(Context context) {
@@ -50,13 +49,22 @@ public class FlowLayout extends RelativeLayout {
         this.context = context;
     }
 
+
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
-            getChildAt(i).layout(l, t, r, b);
+            Log.d("ewrwer", String.valueOf(getChildAt(i).getWidth() + " " + getChildAt(i).getHeight()));
+            getChildAt(i).layout(0, 0, getChildAt(i).getWidth(), getChildAt(i).getHeight());
         }
     }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
+    }
+
 
     /**
      * item点击监听
@@ -82,6 +90,16 @@ public class FlowLayout extends RelativeLayout {
      */
     public FlowLayout setItemView(View itemView) {
         this.itemView = itemView;
+        return this;
+    }
+
+    /**
+     * 设置适配器
+     * @param flowlayoutAdapter
+     * @return
+     */
+    public FlowLayout setAdapter(FlowlayoutAdapter flowlayoutAdapter) {
+        this.flowlayoutAdapter = flowlayoutAdapter;
         return this;
     }
 
@@ -156,20 +174,7 @@ public class FlowLayout extends RelativeLayout {
      * 提交
      */
     public void commit() {
-        //控件宽度
-        int width = getMeasuredWidth();
-        //item宽度和
-        int widthsum = 0;
-        for (int i = 0; i < getChildCount(); i++) {
-            TextView textView = (TextView) getChildAt(i);
-            RelativeLayout.LayoutParams layoutParams = (LayoutParams) textView.getLayoutParams();
-            if (i > 0)
-                layoutParams.leftMargin=100;
-                layoutParams.addRule(RelativeLayout.RIGHT_OF);
-            textView.setLayoutParams(layoutParams);
-            // widthsum += itemView.getMeasuredWidth() + horizontalMargin;
-            //this.addView(itemView);
-        }
+
     }
 //--------------------------------------操作方法------------------------------------------------------
 
