@@ -10,5 +10,6 @@
         android:id="@+id/ii"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimary" />
+        android:background="@color/colorPrimary"
+        app:max_select = "noLimit" />
 </RelativeLayout>
