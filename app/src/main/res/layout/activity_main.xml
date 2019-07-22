@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <com.ming.flowlayout_lib.FlowLayout
+    <com.ming.flowlayout_lib.TagFlowLayout
         android:id="@+id/ii"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
