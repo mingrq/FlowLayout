@@ -1,6 +1,8 @@
 package com.ming.flowlayout_lib;
 
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.support.v4.text.TextUtilsCompat;
 import android.util.AttributeSet;
 import android.util.LayoutDirection;
 import android.util.Log;
@@ -9,6 +11,7 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class TagFlowLayout extends ViewGroup {
     //item
@@ -20,9 +23,9 @@ public class TagFlowLayout extends ViewGroup {
     //可选中item数量
     private int countAble;
     //单选
-    private int SINGLECHOICE = 1;
+    private static final int SINGLECHOICE = 1;
     //多选
-    private int MULTIPLECHOICE = 0;
+    private static final int MULTIPLECHOICE = 0;
     //数据集合
     private List dataList;
     //item点击监听
@@ -34,7 +37,13 @@ public class TagFlowLayout extends ViewGroup {
     //adapter
     private FlowlayoutAdapter flowlayoutAdapter;
     private Context context;
-    private int count;
+
+    //布局方向
+    private int mGravity;
+    //布局方向常量
+    private static final int LEFT = -1;
+    private static final int CENTER = 0;
+    private static final int RIGHT = 1;
 
     public TagFlowLayout(Context context) {
         this(context, null);
@@ -48,8 +57,27 @@ public class TagFlowLayout extends ViewGroup {
         super(context, attrs, defStyleAttr);
         //初始化item选择集合
         selectList = new ArrayList<>();
-        Log.d("test",String.valueOf(LayoutDirection.RTL));
+        //获取布局方向
+
         this.context = context;
+        //获取自定义属性
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FlowLayout);
+        //获取最大可选数量
+        countAble = typedArray.getInt(R.styleable.FlowLayout_max_select, SINGLECHOICE);
+        //获取布局方向
+        mGravity = typedArray.getInt(R.styleable.FlowLayout_tag_gravity, LEFT);
+        //获取本地的布局方向
+        int layoutDirection = TextUtilsCompat.getLayoutDirectionFromLocale(Locale.getDefault());
+        if (layoutDirection == LayoutDirection.RTL) {
+            //本地布局方向是从右向左
+            if (mGravity == LEFT) {
+                //没有设置布局方向，本地的布局方向是从右向左，设置布局方向为从右向左
+                mGravity = RIGHT;
+            } else {
+                //设置的布局方向不是从左向右，
+                mGravity = LEFT;
+            }
+        }
     }
 
     @Override
@@ -90,7 +118,7 @@ public class TagFlowLayout extends ViewGroup {
             }
             //测量child
             measureChild(child, widthMeasureSpec, heightMeasureSpec);
-            MarginLayoutParams lp = (MarginLayoutParams) child
+            ViewGroup.MarginLayoutParams lp = (MarginLayoutParams) child
                     .getLayoutParams();
             //child的宽和高
             int childWidth = child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin;
