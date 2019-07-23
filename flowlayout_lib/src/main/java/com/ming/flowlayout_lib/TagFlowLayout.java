@@ -90,7 +90,7 @@ public class TagFlowLayout extends ViewGroup {
             }
             //测量child
             measureChild(child, widthMeasureSpec, heightMeasureSpec);
-            ViewGroup.MarginLayoutParams lp = (MarginLayoutParams) child
+            MarginLayoutParams lp = (MarginLayoutParams) child
                     .getLayoutParams();
             //child的宽和高
             int childWidth = child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin;
