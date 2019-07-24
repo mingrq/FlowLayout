@@ -2,8 +2,8 @@ package com.ming.flowlayout_lib;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.View;
-import android.widget.Adapter;
 
 import java.util.List;
 
@@ -53,6 +53,7 @@ public class FlowLayout extends TagFlowLayout implements FlowlayoutAdapter.OnDat
 
     public FlowLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        this.context = context;
     }
 
     @Override
@@ -79,10 +80,10 @@ public class FlowLayout extends TagFlowLayout implements FlowlayoutAdapter.OnDat
                 MarginLayoutParams mlp = new MarginLayoutParams(
                         LayoutParams.WRAP_CONTENT,
                         LayoutParams.WRAP_CONTENT);
-                mlp.setMargins(dip2px(getContext(), 5),
-                        dip2px(getContext(), 5),
-                        dip2px(getContext(), 5),
-                        dip2px(getContext(), 5));
+                mlp.setMargins(dp2px(5),
+                        dp2px(5),
+                        dp2px(5),
+                        dp2px(5));
                 itemView.setLayoutParams(mlp);
             }
             //重写为view设置布局参数，使之与item大小相同
@@ -95,9 +96,12 @@ public class FlowLayout extends TagFlowLayout implements FlowlayoutAdapter.OnDat
         }
     }
 
-    public static int dip2px(Context context, float dpValue) {
-        final float scale = context.getResources().getDisplayMetrics().density;
-        return (int) (dpValue * scale + 0.5f);
+    /**
+     * dp转px
+     */
+    public int dp2px(float dpValues) {
+        dpValues = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValues, context.getResources().getDisplayMetrics());
+        return (int) (dpValues + 0.5f);
     }
     /*--------------------------------------------------对外方法-----------------------------------------------------*/
     //-----------------------------初始化方法---------------------------------------

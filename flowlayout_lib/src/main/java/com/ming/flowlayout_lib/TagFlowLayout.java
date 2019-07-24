@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class TagFlowLayout extends ViewGroup {
@@ -132,6 +133,10 @@ public class TagFlowLayout extends ViewGroup {
                 modeHeight == MeasureSpec.EXACTLY ? sizeHeight : height + getPaddingTop() + getPaddingBottom()
         );
     }
+    protected List<List<View>> mAllViews = new ArrayList<List<View>>();
+    protected List<Integer> mLineHeight = new ArrayList<Integer>();
+    protected List<Integer> mLineWidth = new ArrayList<Integer>();
+    private List<View> lineViews = new ArrayList<>();
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
@@ -158,14 +163,18 @@ public class TagFlowLayout extends ViewGroup {
             if (childWidth + lp.leftMargin + lp.rightMargin > width - getPaddingLeft() - getPaddingRight()) {
                 //此行加上child宽后超过控件宽度
 
+            }else {
+                //child.layout(getPaddingLeft());
             }
-            child.layout(10 * i, 20 * i, 200, 200);
-          /*  int lc = left + lp.leftMargin;
-            int tc = top + lp.topMargin;
-            int rc = lc + child.getMeasuredWidth();
-            int bc = tc + child.getMeasuredHeight();
-            child.layout();*/
+
+          //  int lc = left + lp.leftMargin;
+           // int tc = top + lp.topMargin;
+          //  int rc = lc + child.getMeasuredWidth();
+           // int bc = tc + child.getMeasuredHeight();
+            //child.layout();
         }
+
+
     }
 
 
