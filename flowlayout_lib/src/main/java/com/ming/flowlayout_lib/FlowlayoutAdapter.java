@@ -8,6 +8,7 @@ import java.util.List;
 public abstract class FlowlayoutAdapter<T> {
     private List<T> mTagDatas;
     private OnDataChangedListener mOnDataChangedListener;
+
     public FlowlayoutAdapter(List<T> datas) {
         mTagDatas = datas;
     }
@@ -32,9 +33,19 @@ public abstract class FlowlayoutAdapter<T> {
      */
     public abstract void unselect();
 
+    /**
+     * 获取item的数量
+     *
+     * @return
+     */
+    public int getCount() {
+        return mTagDatas == null ? 0 : mTagDatas.size();
+    }
+
     public T getItem(int position) {
         return mTagDatas.get(position);
     }
+
 
     public abstract View getView(TagFlowLayout parent, int position, T t);
 
