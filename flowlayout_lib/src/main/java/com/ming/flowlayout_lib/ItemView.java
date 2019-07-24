@@ -2,9 +2,6 @@ package com.ming.flowlayout_lib;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.util.AttributeSet;
-import android.widget.CheckBox;
 import android.widget.Checkable;
 import android.widget.FrameLayout;
 

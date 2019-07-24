@@ -3,6 +3,7 @@ package com.ming.flowlayout_lib;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.Adapter;
 
 import java.util.List;
 
@@ -43,11 +44,11 @@ public class FlowLayout extends TagFlowLayout implements FlowlayoutAdapter.OnDat
     private static final int RIGHT = 1;
 
     public FlowLayout(Context context) {
-        this(context,null);
+        this(context, null);
     }
 
     public FlowLayout(Context context, AttributeSet attrs) {
-        this(context, attrs,0);
+        this(context, attrs, 0);
     }
 
     public FlowLayout(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -56,18 +57,34 @@ public class FlowLayout extends TagFlowLayout implements FlowlayoutAdapter.OnDat
 
     @Override
     public void onChanged() {
-
+        addView();
     }
 
+    /**
+     * 将view加入flowlayout
+     */
     private void addView() {
+        removeAllViews();
         int itemCount = flowlayoutAdapter.getCount();
         for (int i = 0; i < itemCount; i++) {
             //输入的view
-            View view = flowlayoutAdapter.getView(this, i, flowlayoutAdapter.getItem(i));
+            View view = flowlayoutAdapter.getView(i);
             //重写的itemview，添加checked功能
             ItemView itemView = new ItemView(getContext());
-            //将view的布局参数赋予itemview
-            itemView.setLayoutParams(view.getLayoutParams());
+            itemView.setDuplicateParentStateEnabled(true);
+            if (view.getLayoutParams() != null) {
+                //将view的布局参数赋予itemview
+                itemView.setLayoutParams(view.getLayoutParams());
+            } else {
+                MarginLayoutParams mlp = new MarginLayoutParams(
+                        LayoutParams.WRAP_CONTENT,
+                        LayoutParams.WRAP_CONTENT);
+                mlp.setMargins(dip2px(getContext(), 5),
+                        dip2px(getContext(), 5),
+                        dip2px(getContext(), 5),
+                        dip2px(getContext(), 5));
+                itemView.setLayoutParams(mlp);
+            }
             //重写为view设置布局参数，使之与item大小相同
             LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
             view.setLayoutParams(lp);
@@ -78,6 +95,10 @@ public class FlowLayout extends TagFlowLayout implements FlowlayoutAdapter.OnDat
         }
     }
 
+    public static int dip2px(Context context, float dpValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
+    }
     /*--------------------------------------------------对外方法-----------------------------------------------------*/
     //-----------------------------初始化方法---------------------------------------
 
@@ -105,7 +126,7 @@ public class FlowLayout extends TagFlowLayout implements FlowlayoutAdapter.OnDat
      * @param marginBottom 下间距
      * @return
      */
-    public TagFlowLayout setItemMargin(int marginLeft, int marginTop, int marginRight, int marginBottom) {
+    public FlowLayout setItemMargin(int marginLeft, int marginTop, int marginRight, int marginBottom) {
         this.marginLeft = marginLeft;
         this.marginTop = marginTop;
         this.marginRight = marginRight;
@@ -120,7 +141,7 @@ public class FlowLayout extends TagFlowLayout implements FlowlayoutAdapter.OnDat
      * @param countAble
      * @return
      */
-    public TagFlowLayout setChoiceType(int countAble) throws InputException {
+    public TagFlowLayout setMaxSelectCount(int countAble) throws InputException {
         if (countAble == 1) {//单选
             this.countAble = SINGLECHOICE;
         } else if (countAble == 0) {//多选

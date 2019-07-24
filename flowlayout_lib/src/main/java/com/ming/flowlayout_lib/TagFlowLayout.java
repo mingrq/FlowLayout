@@ -156,9 +156,10 @@ public class TagFlowLayout extends ViewGroup {
             int childHeight = child.getMeasuredHeight();
 
             if (childWidth + lp.leftMargin + lp.rightMargin > width - getPaddingLeft() - getPaddingRight()) {
-            //此行加上child宽后超过控件宽度
+                //此行加上child宽后超过控件宽度
 
             }
+            child.layout(10 * i, 20 * i, 200, 200);
           /*  int lc = left + lp.leftMargin;
             int tc = top + lp.topMargin;
             int rc = lc + child.getMeasuredWidth();
@@ -180,6 +181,7 @@ public class TagFlowLayout extends ViewGroup {
      */
     public interface OnItemCheckChangeLisenter {
         void Select(List<Integer> selectPoistion);
+
         void CheckChange(int postion);
     }
 }
