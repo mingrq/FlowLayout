@@ -31,11 +31,6 @@ public class TestAdapter extends FlowlayoutAdapter {
     }
 
     @Override
-    public Object getItem(int position) {
-        return mTagDatas.get(position);
-    }
-
-    @Override
     public View getView(int position) {
         View view = View.inflate(context, R.layout.item, null);
         TextView textView = view.findViewById(R.id.tesr);

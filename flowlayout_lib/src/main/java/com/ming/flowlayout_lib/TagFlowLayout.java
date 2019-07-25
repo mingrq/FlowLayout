@@ -77,6 +77,7 @@ public class TagFlowLayout extends ViewGroup {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+
         //控件宽
         int sizeWidth = MeasureSpec.getSize(widthMeasureSpec);
         //控件宽模式
@@ -86,9 +87,6 @@ public class TagFlowLayout extends ViewGroup {
         //控件高模式
         int modeHeight = MeasureSpec.getMode(heightMeasureSpec);
 
-        //获取child数量
-        int cCount = getChildCount();
-
         //所有显示child的宽和高
         int width = 0;
         int height = 0;
@@ -97,8 +95,13 @@ public class TagFlowLayout extends ViewGroup {
         int lineWidth = 0;
         int lineHeight = 0;
 
+        //获取child数量
+        int cCount = getChildCount();
+
+
         //遍历所有child
         for (int i = 0; i < cCount; i++) {
+            Log.e("test1",String.valueOf(height));
             View child = getChildAt(i);
             if (child.getVisibility() == GONE) {
                 //child是隐藏的
@@ -114,28 +117,30 @@ public class TagFlowLayout extends ViewGroup {
             //测量child
             measureChild(child, widthMeasureSpec, heightMeasureSpec);
             MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
+
             //child的宽和高
             int childWidth = child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin;
-
             int childHeight = child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin;
 
             //测量child宽高确定View的宽高
             if (lineWidth + childWidth > sizeWidth - getPaddingLeft() - getPaddingRight()) {
-                //现有的child宽大于控件宽
+                //现有的所有child宽相加大于控件宽
                 width = Math.max(lineWidth, width);
                 lineWidth = childWidth;
                 height += lineHeight;
                 lineHeight = childHeight;
             } else {
-                //现有的child宽小于控件宽
+                //现有的所有child宽相加小于控件宽
                 lineWidth += childWidth;
-                lineHeight = Math.max(lineHeight, height);
+                lineHeight = Math.max(lineHeight, childHeight);
             }
             if (i == cCount - 1) {
                 width = Math.max(lineWidth, width);
                 height += lineHeight;
             }
         }
+        Log.e("test", modeWidth + " " + modeHeight + " " + (width + getPaddingLeft() + getPaddingRight()) + " " + " " + getPaddingTop() + " " + getPaddingBottom()+" " + (height + getPaddingTop() + getPaddingBottom()) + " " + heightMeasureSpec);
+
         setMeasuredDimension(
                 modeWidth == MeasureSpec.EXACTLY ? sizeWidth : width + getPaddingRight() + getPaddingLeft(),
                 modeHeight == MeasureSpec.EXACTLY ? sizeHeight : height + getPaddingTop() + getPaddingBottom()

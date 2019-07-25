@@ -41,7 +41,6 @@ public abstract class FlowlayoutAdapter<T> {
      */
     public abstract int getCount();
 
-    public abstract Object getItem(int position);
 
     public abstract View getView(int position);
 

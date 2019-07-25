@@ -19,9 +19,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         FlowLayout flowLayout = findViewById(R.id.ii);
         List<String> jd = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            Random random = new Random();
-            jd.add("test" + i);
+        for (int i = 0; i < 1; i++) {
+            jd.add("test" + (i+1));
         }
         TestAdapter testAdapter = new TestAdapter(getBaseContext());
         testAdapter.setDatas(jd);
