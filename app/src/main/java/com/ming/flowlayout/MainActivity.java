@@ -9,6 +9,7 @@ import com.ming.flowlayout_lib.TagFlowLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
         FlowLayout flowLayout = findViewById(R.id.ii);
         List<String> jd = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
+            Random random = new Random();
             jd.add("test" + i);
         }
         TestAdapter testAdapter = new TestAdapter(getBaseContext());

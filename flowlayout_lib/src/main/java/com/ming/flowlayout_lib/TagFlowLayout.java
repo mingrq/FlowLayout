@@ -3,6 +3,7 @@ package com.ming.flowlayout_lib;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -35,6 +36,11 @@ public class TagFlowLayout extends ViewGroup {
     private FlowlayoutAdapter flowlayoutAdapter;
     private Context context;
 
+    //单行view集合
+    List<View> lineViewList = new ArrayList<>();
+    //所有存放view的行集合
+    List<List<View>> allLineViewList = new ArrayList<>();
+
     //布局方向
     private int mGravity;
     //布局方向常量
@@ -52,15 +58,17 @@ public class TagFlowLayout extends ViewGroup {
 
     public TagFlowLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        this.context = context;
+
         //初始化item选择集合
         selectList = new ArrayList<>();
-        //获取布局方向
 
-        this.context = context;
         //获取自定义属性
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FlowLayout);
+
         //获取最大可选数量
         countAble = typedArray.getInt(R.styleable.FlowLayout_max_select, SINGLECHOICE);
+
         //获取布局方向
         mGravity = typedArray.getInt(R.styleable.FlowLayout_tag_gravity, LEFT);
 
@@ -133,13 +141,14 @@ public class TagFlowLayout extends ViewGroup {
                 modeHeight == MeasureSpec.EXACTLY ? sizeHeight : height + getPaddingTop() + getPaddingBottom()
         );
     }
-    protected List<List<View>> mAllViews = new ArrayList<List<View>>();
-    protected List<Integer> mLineHeight = new ArrayList<Integer>();
-    protected List<Integer> mLineWidth = new ArrayList<Integer>();
-    private List<View> lineViews = new ArrayList<>();
+
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        //清空集合
+        lineViewList.clear();
+        allLineViewList.clear();
+
         //child数量
         int cCount = getChildCount();
         //行高
@@ -148,10 +157,13 @@ public class TagFlowLayout extends ViewGroup {
         int lineWidth = 0;
         //控件宽度
         int width = getWidth();
+
+        //遍历child，确定位置
         for (int i = 0; i < cCount; i++) {
             View child = getChildAt(i);
             //child是否为隐藏状态，隐藏则设置下一个
-            if (child.getVisibility() == View.GONE) continue;
+            if (child.getVisibility() == View.GONE)
+                continue;
 
             MarginLayoutParams lp = (MarginLayoutParams) child
                     .getLayoutParams();
@@ -160,21 +172,56 @@ public class TagFlowLayout extends ViewGroup {
             int childWidth = child.getMeasuredWidth();
             int childHeight = child.getMeasuredHeight();
 
-            if (childWidth + lp.leftMargin + lp.rightMargin > width - getPaddingLeft() - getPaddingRight()) {
+            //确定itemview的行位置，第一个view不会执行这个循环(防止第一个child就大于控件宽)
+            if (childWidth + lineWidth + lp.leftMargin + lp.rightMargin > width - getPaddingLeft() - getPaddingRight() && i > 0) {
                 //此行加上child宽后超过控件宽度
+                //开始下一行计算
 
-            }else {
-                //child.layout(getPaddingLeft());
+                //清空行宽，重新计算
+                lineWidth = 0;
+                //计算行高
+                lineHeight = childHeight + lp.topMargin + lp.bottomMargin;
+
+                //将这一行的view集合放入所有view集合中，新建一个view集合
+                allLineViewList.add(lineViewList);
+                lineViewList = new ArrayList<>();
             }
 
-          //  int lc = left + lp.leftMargin;
-           // int tc = top + lp.topMargin;
-          //  int rc = lc + child.getMeasuredWidth();
-           // int bc = tc + child.getMeasuredHeight();
-            //child.layout();
+            lineWidth += childWidth + lp.leftMargin + lp.rightMargin;
+            //所有行中最高值
+            lineHeight = Math.max(lineHeight, childHeight + lp.topMargin + lp.bottomMargin);
+            lineViewList.add(child);
         }
+        allLineViewList.add(lineViewList);
 
+        //view左上角位置
+        int leftDimension;
+        int topDimension = getPaddingTop();
 
+        //遍历所有行集合
+        for (int j = 0; j < allLineViewList.size(); j++) {
+            //获取行view集合
+            lineViewList = allLineViewList.get(j);
+            leftDimension = getPaddingLeft();
+            //遍历行行view集合
+            for (int k = 0; k < lineViewList.size(); k++) {
+                View child = lineViewList.get(k);
+
+             /*   //child是否为隐藏状态，隐藏则设置下一个
+                if (child.getVisibility() == View.GONE) {
+                    continue;
+                }*/
+
+                MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
+                int lc = leftDimension + lp.leftMargin;
+                int tc = topDimension + lp.topMargin;
+                int rc = lc + child.getMeasuredWidth();
+                int bc = tc + child.getMeasuredHeight();
+                child.layout(lc, tc, rc, bc);
+                leftDimension = rc + lp.rightMargin;
+            }
+            topDimension += lineHeight;
+        }
     }
 
 
