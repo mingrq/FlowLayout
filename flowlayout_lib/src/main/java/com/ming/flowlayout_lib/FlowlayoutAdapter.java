@@ -1,53 +1,68 @@
 package com.ming.flowlayout_lib;
 
 
+import android.content.Context;
 import android.view.View;
+import android.view.ViewGroup;
 
 import java.util.List;
 
 public abstract class FlowlayoutAdapter<T> {
+
     private List<T> mTagDatas;
     private OnDataChangedListener mOnDataChangedListener;
-    public FlowlayoutAdapter(List<T> datas) {
-        mTagDatas = datas;
+    private Context context;
+
+    public FlowlayoutAdapter(Context context) {
+        this.context = context;
     }
 
     /**
-     * 点击
+     * 数据变化监听接口
      */
-    public abstract void click();
-
-    /**
-     * 取消点击
-     */
-    public abstract void unclick();
-
-    /**
-     * 选择
-     */
-    public abstract void select();
-
-    /**
-     * 取消选择
-     */
-    public abstract void unselect();
-
-    public T getItem(int position) {
-        return mTagDatas.get(position);
+    interface OnDataChangedListener {
+        void onChanged();
     }
 
-    public abstract View getView(TagFlowLayout parent, int position, T t);
+    /**
+     * 设置数据变化监听
+     * @param listener
+     */
+    protected void setOnDataChangedListener(OnDataChangedListener listener) {
+        mOnDataChangedListener = listener;
+    }
 
+    //--------------------------------------抽象方法--------------------------------------------------
+
+    /**
+     * 获取item的数量
+     *
+     * @return
+     */
+    public abstract int getCount();
+
+    public abstract Object getItem(int position);
+
+    public abstract View getView(int position);
+
+
+
+    //----------------------------------------对外方法------------------------------------------------
+
+    /**
+     * 更新数据
+     */
     public void notifyDataChanged() {
         if (mOnDataChangedListener != null)
             mOnDataChangedListener.onChanged();
     }
 
-    interface OnDataChangedListener {
-        void onChanged();
-    }
-
-    void setOnDataChangedListener(OnDataChangedListener listener) {
-        mOnDataChangedListener = listener;
+    /**
+     * 判断数据是否为空
+     *
+     * @return
+     */
+    public boolean isEmpty() {
+        return getCount() == 0;
     }
 }

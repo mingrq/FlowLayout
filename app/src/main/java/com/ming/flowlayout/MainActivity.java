@@ -4,10 +4,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.ming.flowlayout_lib.FlowLayout;
 import com.ming.flowlayout_lib.TagFlowLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -15,15 +17,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        TagFlowLayout flowLayout = findViewById(R.id.ii);
-        flowLayout.setItemMargin(10,0);
-        List jd = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            TextView textView = new TextView(this);
-            textView.setId(i);
-            textView.setText("test" + i);
-            textView.setBackgroundColor(getResources().getColor(R.color.colorAccent));
-            flowLayout.addView(textView);
+        FlowLayout flowLayout = findViewById(R.id.ii);
+        List<String> jd = new ArrayList<>();
+        for (int i = 0; i < 20; i++) {
+            Random random = new Random();
+            jd.add("test" + i);
         }
+        TestAdapter testAdapter = new TestAdapter(getBaseContext());
+        testAdapter.setDatas(jd);
+        flowLayout.setAdapter(testAdapter);
     }
 }

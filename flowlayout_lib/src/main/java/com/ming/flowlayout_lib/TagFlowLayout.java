@@ -2,16 +2,14 @@ package com.ming.flowlayout_lib;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.v4.text.TextUtilsCompat;
 import android.util.AttributeSet;
-import android.util.LayoutDirection;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 public class TagFlowLayout extends ViewGroup {
     //item
@@ -31,12 +29,17 @@ public class TagFlowLayout extends ViewGroup {
     //item点击监听
     private OnItemClickLienter onItemClickLienter;
     //item选择监听
-    private OnItemSelectLisenter onItemSelectLisenter;
+    private OnItemCheckChangeLisenter onItemSelectLisenter;
     //item选择集合
     private List<Integer> selectList;
     //adapter
     private FlowlayoutAdapter flowlayoutAdapter;
     private Context context;
+
+    //单行view集合
+    List<View> lineViewList = new ArrayList<>();
+    //所有存放view的行集合
+    List<List<View>> allLineViewList = new ArrayList<>();
 
     //布局方向
     private int mGravity;
@@ -55,29 +58,21 @@ public class TagFlowLayout extends ViewGroup {
 
     public TagFlowLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        this.context = context;
+
         //初始化item选择集合
         selectList = new ArrayList<>();
-        //获取布局方向
 
-        this.context = context;
         //获取自定义属性
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FlowLayout);
+
         //获取最大可选数量
         countAble = typedArray.getInt(R.styleable.FlowLayout_max_select, SINGLECHOICE);
+
         //获取布局方向
         mGravity = typedArray.getInt(R.styleable.FlowLayout_tag_gravity, LEFT);
-        //获取本地的布局方向
-        int layoutDirection = TextUtilsCompat.getLayoutDirectionFromLocale(Locale.getDefault());
-        if (layoutDirection == LayoutDirection.RTL) {
-            //本地布局方向是从右向左
-            if (mGravity == LEFT) {
-                //没有设置布局方向，本地的布局方向是从右向左，设置布局方向为从右向左
-                mGravity = RIGHT;
-            } else {
-                //设置的布局方向不是从左向右，
-                mGravity = LEFT;
-            }
-        }
+
+        typedArray.recycle();
     }
 
     @Override
@@ -118,8 +113,7 @@ public class TagFlowLayout extends ViewGroup {
             }
             //测量child
             measureChild(child, widthMeasureSpec, heightMeasureSpec);
-            ViewGroup.MarginLayoutParams lp = (MarginLayoutParams) child
-                    .getLayoutParams();
+            MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
             //child的宽和高
             int childWidth = child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin;
 
@@ -148,23 +142,85 @@ public class TagFlowLayout extends ViewGroup {
         );
     }
 
+
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        //清空集合
+        lineViewList.clear();
+        allLineViewList.clear();
+
         //child数量
         int cCount = getChildCount();
+        //行高
+        int lineHeight = 0;
+        //行宽
+        int lineWidth = 0;
+        //控件宽度
+        int width = getWidth();
+
+        //遍历child，确定位置
         for (int i = 0; i < cCount; i++) {
             View child = getChildAt(i);
             //child是否为隐藏状态，隐藏则设置下一个
-            if (child.getVisibility() == View.GONE) continue;
-
+            if (child.getVisibility() == View.GONE)
+                continue;
 
             MarginLayoutParams lp = (MarginLayoutParams) child
                     .getLayoutParams();
 
+            //child的宽高
             int childWidth = child.getMeasuredWidth();
             int childHeight = child.getMeasuredHeight();
 
+            //确定itemview的行位置，第一个view不会执行这个循环(防止第一个child就大于控件宽)
+            if (childWidth + lineWidth + lp.leftMargin + lp.rightMargin > width - getPaddingLeft() - getPaddingRight() && i > 0) {
+                //此行加上child宽后超过控件宽度
+                //开始下一行计算
 
+                //清空行宽，重新计算
+                lineWidth = 0;
+                //计算行高
+                lineHeight = childHeight + lp.topMargin + lp.bottomMargin;
+
+                //将这一行的view集合放入所有view集合中，新建一个view集合
+                allLineViewList.add(lineViewList);
+                lineViewList = new ArrayList<>();
+            }
+
+            lineWidth += childWidth + lp.leftMargin + lp.rightMargin;
+            //所有行中最高值
+            lineHeight = Math.max(lineHeight, childHeight + lp.topMargin + lp.bottomMargin);
+            lineViewList.add(child);
+        }
+        allLineViewList.add(lineViewList);
+
+        //view左上角位置
+        int leftDimension;
+        int topDimension = getPaddingTop();
+
+        //遍历所有行集合
+        for (int j = 0; j < allLineViewList.size(); j++) {
+            //获取行view集合
+            lineViewList = allLineViewList.get(j);
+            leftDimension = getPaddingLeft();
+            //遍历行行view集合
+            for (int k = 0; k < lineViewList.size(); k++) {
+                View child = lineViewList.get(k);
+
+             /*   //child是否为隐藏状态，隐藏则设置下一个
+                if (child.getVisibility() == View.GONE) {
+                    continue;
+                }*/
+
+                MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
+                int lc = leftDimension + lp.leftMargin;
+                int tc = topDimension + lp.topMargin;
+                int rc = lc + child.getMeasuredWidth();
+                int bc = tc + child.getMeasuredHeight();
+                child.layout(lc, tc, rc, bc);
+                leftDimension = rc + lp.rightMargin;
+            }
+            topDimension += lineHeight;
         }
     }
 
@@ -179,102 +235,9 @@ public class TagFlowLayout extends ViewGroup {
     /**
      * item选择监听
      */
-    public interface OnItemSelectLisenter {
+    public interface OnItemCheckChangeLisenter {
         void Select(List<Integer> selectPoistion);
+
+        void CheckChange(int postion);
     }
-    /*--------------------------------------------------对外方法-----------------------------------------------------*/
-    //-----------------------------初始化方法---------------------------------------
-
-
-    /**
-     * 设置适配器
-     *
-     * @param flowlayoutAdapter
-     * @return
-     */
-    public TagFlowLayout setAdapter(FlowlayoutAdapter flowlayoutAdapter) {
-        this.flowlayoutAdapter = flowlayoutAdapter;
-        return this;
-    }
-
-    /**
-     * 设置间距
-     *
-     * @param horizontalMargin
-     * @param verticalMargin
-     * @return
-     */
-    public TagFlowLayout setItemMargin(int horizontalMargin, int verticalMargin) {
-        this.horizontalMargin = horizontalMargin;
-        this.verticalMargin = verticalMargin;
-        return this;
-    }
-
-    /**
-     * 设置选择状态
-     * --多选|单选|限制数量
-     *
-     * @param countAble
-     * @return
-     */
-    public TagFlowLayout setChoiceType(int countAble) throws InputException {
-        if (countAble == 1) {//单选
-            this.countAble = SINGLECHOICE;
-        } else if (countAble == 0) {//多选
-            this.countAble = MULTIPLECHOICE;
-        } else if (countAble > 1) {//限制数量
-            this.countAble = countAble;
-        } else {
-            //输入错误
-            throw new InputException();
-        }
-        return this;
-    }
-
-    /**
-     * 设置item点击监听
-     *
-     * @param onItemClickLienter
-     * @return
-     */
-    public TagFlowLayout setOnItemClickLienter(OnItemClickLienter onItemClickLienter) {
-        this.onItemClickLienter = onItemClickLienter;
-        return this;
-    }
-
-    /**
-     * item选择监听
-     *
-     * @param onItemSelectLisenter
-     * @return
-     */
-    public TagFlowLayout setOnItemSelectLisenter(OnItemSelectLisenter onItemSelectLisenter) {
-        this.onItemSelectLisenter = onItemSelectLisenter;
-        return this;
-    }
-
-    /**
-     * 设置预选中
-     */
-    public void setSelectedList(int... postion) {
-
-    }
-
-    /**
-     * 提交
-     */
-    public void commit() {
-
-    }
-//--------------------------------------操作方法------------------------------------------------------
-
-    /**
-     * 获取item选择集合
-     *
-     * @return
-     */
-    public List<Integer> getSelectList() {
-        return selectList;
-    }
-
 }
