@@ -24,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
         }
         TestAdapter testAdapter = new TestAdapter(getBaseContext());
         testAdapter.setDatas(jd);
-        flowLayout.setReserveCheckedList(0,2,5);
         flowLayout.setAdapter(testAdapter);
         flowLayout.setOnItemCheckedChangeLisenter(new FlowLayout.OnItemCheckedChangeLisenter() {
             @Override
@@ -44,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
+        flowLayout.setReserveCheckedList(0,2,5);
+        flowLayout.commit();
     }
 }

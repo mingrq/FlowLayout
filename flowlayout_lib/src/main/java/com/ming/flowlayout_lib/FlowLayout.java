@@ -103,7 +103,7 @@ public class FlowLayout extends TagFlowLayout
             addView(itemView);
             //设置预选中状态
             if (checkedItemSet.contains(i)){
-                doChecked(itemView, i);
+                itemView.setChecked(true);
             }
             //为itemview设置点击监听
             final int position = i;
@@ -211,9 +211,7 @@ public class FlowLayout extends TagFlowLayout
      */
     public TagFlowLayout setAdapter(FlowlayoutAdapter flowlayoutAdapter) {
         this.flowlayoutAdapter = flowlayoutAdapter;
-        //绑定数据变化监听
-        flowlayoutAdapter.setOnDataChangedListener(this);
-        addView();
+
         return this;
     }
 
@@ -287,8 +285,6 @@ public class FlowLayout extends TagFlowLayout
         //遍历数组
         for (int p : reserveChecked) {
             checkedItemSet.add(p);
-            //设置itemview选中状态
-
         }
     }
 
@@ -296,7 +292,9 @@ public class FlowLayout extends TagFlowLayout
      * 提交
      */
     public void commit() {
-
+        //绑定数据变化监听
+        flowlayoutAdapter.setOnDataChangedListener(this);
+        addView();
     }
 //--------------------------------------操作方法------------------------------------------------------
 
