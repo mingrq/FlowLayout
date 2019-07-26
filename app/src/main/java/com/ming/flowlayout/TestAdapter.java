@@ -34,6 +34,11 @@ public class TestAdapter extends FlowlayoutAdapter {
     }
 
     @Override
+    public int getItem(int position) {
+        return 0;
+    }
+
+    @Override
     public View getView(int position, FlowLayout parent) {
         TextView textView = (TextView) LayoutInflater.from(context).inflate(R.layout.item,
                 parent, false);

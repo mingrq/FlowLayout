@@ -5,7 +5,9 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class FlowLayout extends TagFlowLayout
         implements FlowlayoutAdapter.OnDataChangedListener {
@@ -30,12 +32,12 @@ public class FlowLayout extends TagFlowLayout
     //item点击监听
     private OnItemClickLienter onItemClickLienter;
     //item选择监听
-    private OnItemCheckChangeLisenter onItemSelectLisenter;
-    //item选择集合
-    private List<Integer> selectList;
+    private OnItemCheckedChangeLisenter onItemCheckedChangeLisenter;
     //adapter
     private FlowlayoutAdapter flowlayoutAdapter;
     private Context context;
+    //item选中下标集合
+    Set<Integer> checkedItemSet = new HashSet<>();
 
     //布局方向
     private int mGravity;
@@ -55,6 +57,8 @@ public class FlowLayout extends TagFlowLayout
     public FlowLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.context = context;
+        //初始清空集合
+        checkedItemSet.clear();
     }
 
     @Override
@@ -74,7 +78,9 @@ public class FlowLayout extends TagFlowLayout
             //重写的itemview，添加checked功能
             final ItemView itemView = new ItemView(getContext());
             //复制itemview的状态传递给所有clicked=false&&longclicked=false的子控件
-            itemView.setDuplicateParentStateEnabled(true);
+            view.setDuplicateParentStateEnabled(true);
+            //因为itemview使用了控件状态传递功能，将view的clicked设置成false
+            view.setClickable(false);
             if (view.getLayoutParams() != null && view.getLayoutParams() instanceof MarginLayoutParams) {
                 //将view的布局参数赋予itemview
                 itemView.setLayoutParams(view.getLayoutParams());
@@ -95,10 +101,10 @@ public class FlowLayout extends TagFlowLayout
             itemView.addView(view);
             //将itemview放入flowlayout中
             addView(itemView);
-
-            //因为itemview使用了控件状态传递功能，将view的clicked设置成false
-            view.setClickable(false);
-
+            //设置预选中状态
+            if (checkedItemSet.contains(i)){
+                doChecked(itemView, i);
+            }
             //为itemview设置点击监听
             final int position = i;
             itemView.setOnClickListener(new OnClickListener() {
@@ -107,20 +113,60 @@ public class FlowLayout extends TagFlowLayout
                     //判断点击监听是否存在
                     if (onItemClickLienter != null)
                         onItemClickLienter.onClick(position, itemView, FlowLayout.this);
-                    //选中item
-                    doSelect(itemView,position);
+                    //处理选中的item点击事件
+                    doChecked(itemView, position);
                 }
             });
         }
     }
 
     /**
-     * 选中iten
+     * 处理选中的item点击事件
+     *
      * @param itemView 选中的view
      * @param postion  itemview在集合中的下标
      */
-    private void doSelect(ItemView itemView,int postion){
+    private void doChecked(ItemView itemView, int postion) {
+        if (itemView.isChecked()) {
+            //选中状态，设置为未选中状态
+            setChildUnChecked(itemView, postion);
+        } else {
+            //未选中状态，设置成选中状态
+            setChildChecked(itemView, postion);
+        }
+        if (onItemCheckedChangeLisenter != null)
+            onItemCheckedChangeLisenter.onCheckedChange(postion, itemView.isChecked());
+    }
 
+
+    /**
+     * 选中item
+     *
+     * @param itemView 选中的view
+     * @param postion  itemview在集合中的下标
+     */
+    private void setChildChecked(ItemView itemView, int postion) {
+        //设置item为选中状态
+        itemView.setChecked(true);
+        //将选中的item的下标添加到集合中
+        checkedItemSet.add(postion);
+        if (onItemCheckedChangeLisenter != null)
+            onItemCheckedChangeLisenter.onChecked(postion);
+    }
+
+    /**
+     * 取消选中item
+     *
+     * @param itemView 选中的view
+     * @param postion  itemview在集合中的下标
+     */
+    private void setChildUnChecked(ItemView itemView, int postion) {
+        //设置item为未选中状态
+        itemView.setChecked(false);
+        //将选中的item的下标在集合中移除
+        checkedItemSet.remove(postion);
+        if (onItemCheckedChangeLisenter != null)
+            onItemCheckedChangeLisenter.onUnChecked(postion);
     }
 
     /**
@@ -143,11 +189,13 @@ public class FlowLayout extends TagFlowLayout
     /**
      * item选择监听
      */
-    public interface OnItemCheckChangeLisenter {
+    public interface OnItemCheckedChangeLisenter {
 
-        void onSelect(List<Integer> selectPosition);
+        void onCheckedChange(int position, boolean isChecked);
 
-        void onSelectChange(int position);
+        void onChecked(int position);
+
+        void onUnChecked(int position);
     }
 
 
@@ -222,19 +270,26 @@ public class FlowLayout extends TagFlowLayout
     /**
      * item选择监听
      *
-     * @param onItemSelectLisenter
+     * @param onItemCheckedChangeLisenter
      * @return
      */
-    public TagFlowLayout setOnItemSelectLisenter(OnItemCheckChangeLisenter onItemSelectLisenter) {
-        this.onItemSelectLisenter = onItemSelectLisenter;
+    public TagFlowLayout setOnItemCheckedChangeLisenter(OnItemCheckedChangeLisenter onItemCheckedChangeLisenter) {
+        this.onItemCheckedChangeLisenter = onItemCheckedChangeLisenter;
         return this;
     }
 
     /**
      * 设置预选中
      */
-    public void setSelectedList(int... position) {
+    public void setReserveCheckedList(int... position) {
+        //获取预选中的下标数组
+        int[] reserveChecked = position;
+        //遍历数组
+        for (int p : reserveChecked) {
+            checkedItemSet.add(p);
+            //设置itemview选中状态
 
+        }
     }
 
     /**
@@ -250,8 +305,8 @@ public class FlowLayout extends TagFlowLayout
      *
      * @return
      */
-    public List<Integer> getSelectList() {
-        return selectList;
+    public Set<Integer> getCheckedSet() {
+        return checkedItemSet;
     }
 
 }
