@@ -7,7 +7,8 @@ import android.view.View;
 
 import java.util.List;
 
-public class FlowLayout extends TagFlowLayout implements FlowlayoutAdapter.OnDataChangedListener {
+public class FlowLayout extends TagFlowLayout
+        implements FlowlayoutAdapter.OnDataChangedListener {
     //item
     private View itemView;
     //item左间距
@@ -69,21 +70,22 @@ public class FlowLayout extends TagFlowLayout implements FlowlayoutAdapter.OnDat
         int itemCount = flowlayoutAdapter.getCount();
         for (int i = 0; i < itemCount; i++) {
             //输入的view
-            View view = flowlayoutAdapter.getView(i);
+            View view = flowlayoutAdapter.getView(i, this);
             //重写的itemview，添加checked功能
-            ItemView itemView = new ItemView(getContext());
+            final ItemView itemView = new ItemView(getContext());
+            //复制itemview的状态传递给所有clicked=false&&longclicked=false的子控件
             itemView.setDuplicateParentStateEnabled(true);
-            if (view.getLayoutParams() != null) {
+            if (view.getLayoutParams() != null && view.getLayoutParams() instanceof MarginLayoutParams) {
                 //将view的布局参数赋予itemview
                 itemView.setLayoutParams(view.getLayoutParams());
             } else {
                 MarginLayoutParams mlp = new MarginLayoutParams(
                         LayoutParams.WRAP_CONTENT,
                         LayoutParams.WRAP_CONTENT);
-                mlp.setMargins(dp2px(5),
-                        dp2px(5),
-                        dp2px(5),
-                        dp2px(5));
+                mlp.setMargins(dp2px(0),
+                        dp2px(0),
+                        dp2px(0),
+                        dp2px(0));
                 itemView.setLayoutParams(mlp);
             }
             //重写为view设置布局参数，使之与item大小相同
@@ -93,7 +95,32 @@ public class FlowLayout extends TagFlowLayout implements FlowlayoutAdapter.OnDat
             itemView.addView(view);
             //将itemview放入flowlayout中
             addView(itemView);
+
+            //因为itemview使用了控件状态传递功能，将view的clicked设置成false
+            view.setClickable(false);
+
+            //为itemview设置点击监听
+            final int position = i;
+            itemView.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //判断点击监听是否存在
+                    if (onItemClickLienter != null)
+                        onItemClickLienter.onClick(position, itemView, FlowLayout.this);
+                    //选中item
+                    doSelect(itemView,position);
+                }
+            });
         }
+    }
+
+    /**
+     * 选中iten
+     * @param itemView 选中的view
+     * @param postion  itemview在集合中的下标
+     */
+    private void doSelect(ItemView itemView,int postion){
+
     }
 
     /**
@@ -103,6 +130,27 @@ public class FlowLayout extends TagFlowLayout implements FlowlayoutAdapter.OnDat
         dpValues = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValues, context.getResources().getDisplayMetrics());
         return (int) (dpValues + 0.5f);
     }
+
+    //----------------------------------------监听器-----------------------------------------
+
+    /**
+     * item点击监听
+     */
+    public interface OnItemClickLienter {
+        void onClick(int position, ItemView itemView, FlowLayout flowLayout);
+    }
+
+    /**
+     * item选择监听
+     */
+    public interface OnItemCheckChangeLisenter {
+
+        void onSelect(List<Integer> selectPosition);
+
+        void onSelectChange(int position);
+    }
+
+
     /*--------------------------------------------------对外方法-----------------------------------------------------*/
     //-----------------------------初始化方法---------------------------------------
 
@@ -122,7 +170,8 @@ public class FlowLayout extends TagFlowLayout implements FlowlayoutAdapter.OnDat
     }
 
     /**
-     * 设置间距
+     * 设置默认间距
+     * --在item没有设置mragin时使用默认间距
      *
      * @param marginLeft   左间距
      * @param marginTop    上间距
@@ -130,7 +179,7 @@ public class FlowLayout extends TagFlowLayout implements FlowlayoutAdapter.OnDat
      * @param marginBottom 下间距
      * @return
      */
-    public FlowLayout setItemMargin(int marginLeft, int marginTop, int marginRight, int marginBottom) {
+    public FlowLayout setItemDefultMargin(int marginLeft, int marginTop, int marginRight, int marginBottom) {
         this.marginLeft = marginLeft;
         this.marginTop = marginTop;
         this.marginRight = marginRight;
@@ -184,7 +233,7 @@ public class FlowLayout extends TagFlowLayout implements FlowlayoutAdapter.OnDat
     /**
      * 设置预选中
      */
-    public void setSelectedList(int... postion) {
+    public void setSelectedList(int... position) {
 
     }
 

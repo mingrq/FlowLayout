@@ -6,11 +6,15 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <com.ming.flowlayout_lib.FlowLayout
+        android:id="@+id/ii"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</RelativeLayout>
 
-        <com.ming.flowlayout_lib.FlowLayout
-            android:id="@+id/ii"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
     </ScrollView>
 
 </RelativeLayout>

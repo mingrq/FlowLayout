@@ -2,6 +2,9 @@ package com.ming.flowlayout;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.nfc.Tag;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -31,11 +34,13 @@ public class TestAdapter extends FlowlayoutAdapter {
     }
 
     @Override
-    public View getView(int position) {
-        View view = View.inflate(context, R.layout.item, null);
-        TextView textView = view.findViewById(R.id.tesr);
+    public View getView(int position, FlowLayout parent) {
+        TextView textView = (TextView) LayoutInflater.from(context).inflate(R.layout.item,
+                parent, false);
         textView.setTextColor(Color.BLACK);
         textView.setText(mTagDatas.get(position));
-        return view;
+        /*ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+        Log.d("testw", String.valueOf(layoutParams.leftMargin));*/
+        return textView;
     }
 }

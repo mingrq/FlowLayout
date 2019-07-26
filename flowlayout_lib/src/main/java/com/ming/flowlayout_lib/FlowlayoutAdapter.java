@@ -7,9 +7,8 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
-public abstract class FlowlayoutAdapter<T> {
+public abstract class FlowlayoutAdapter{
 
-    private List<T> mTagDatas;
     private OnDataChangedListener mOnDataChangedListener;
     private Context context;
 
@@ -41,8 +40,19 @@ public abstract class FlowlayoutAdapter<T> {
      */
     public abstract int getCount();
 
+    /**
+     * 获取item的数据
+     * @return
+     */
+    public abstract int getItem(int position);
 
-    public abstract View getView(int position);
+    /**
+     * 获取itemview
+     * @param position
+     * @param parent
+     * @return
+     */
+    public abstract View getView(int position,FlowLayout parent);
 
 
 

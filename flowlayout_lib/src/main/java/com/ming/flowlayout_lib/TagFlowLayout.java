@@ -26,10 +26,7 @@ public class TagFlowLayout extends ViewGroup {
     private static final int MULTIPLECHOICE = 0;
     //数据集合
     private List dataList;
-    //item点击监听
-    private OnItemClickLienter onItemClickLienter;
-    //item选择监听
-    private OnItemCheckChangeLisenter onItemSelectLisenter;
+
     //item选择集合
     private List<Integer> selectList;
     //adapter
@@ -101,7 +98,6 @@ public class TagFlowLayout extends ViewGroup {
 
         //遍历所有child
         for (int i = 0; i < cCount; i++) {
-            Log.e("test1",String.valueOf(height));
             View child = getChildAt(i);
             if (child.getVisibility() == GONE) {
                 //child是隐藏的
@@ -139,14 +135,12 @@ public class TagFlowLayout extends ViewGroup {
                 height += lineHeight;
             }
         }
-        Log.e("test", modeWidth + " " + modeHeight + " " + (width + getPaddingLeft() + getPaddingRight()) + " " + " " + getPaddingTop() + " " + getPaddingBottom()+" " + (height + getPaddingTop() + getPaddingBottom()) + " " + heightMeasureSpec);
 
         setMeasuredDimension(
                 modeWidth == MeasureSpec.EXACTLY ? sizeWidth : width + getPaddingRight() + getPaddingLeft(),
                 modeHeight == MeasureSpec.EXACTLY ? sizeHeight : height + getPaddingTop() + getPaddingBottom()
         );
     }
-
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
@@ -212,10 +206,10 @@ public class TagFlowLayout extends ViewGroup {
             for (int k = 0; k < lineViewList.size(); k++) {
                 View child = lineViewList.get(k);
 
-             /*   //child是否为隐藏状态，隐藏则设置下一个
+                //child是否为隐藏状态，隐藏则设置下一个
                 if (child.getVisibility() == View.GONE) {
                     continue;
-                }*/
+                }
 
                 MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
                 int lc = leftDimension + lp.leftMargin;
@@ -230,19 +224,21 @@ public class TagFlowLayout extends ViewGroup {
     }
 
 
-    /**
-     * item点击监听
-     */
-    public interface OnItemClickLienter {
-        void Click(int poistion);
+
+//--------------------------------设置LayoutParams------------------------------------------
+    @Override
+    public LayoutParams generateLayoutParams(AttributeSet attrs) {
+        return new MarginLayoutParams(getContext(), attrs);
     }
 
-    /**
-     * item选择监听
-     */
-    public interface OnItemCheckChangeLisenter {
-        void Select(List<Integer> selectPoistion);
-
-        void CheckChange(int postion);
+    @Override
+    protected LayoutParams generateDefaultLayoutParams() {
+        return new MarginLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
     }
+
+    @Override
+    protected LayoutParams generateLayoutParams(LayoutParams p) {
+        return new MarginLayoutParams(p);
+    }
+
 }
