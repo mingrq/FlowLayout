@@ -37,7 +37,8 @@ public class TagFlowLayout extends ViewGroup {
     List<View> lineViewList = new ArrayList<>();
     //所有存放view的行集合
     List<List<View>> allLineViewList = new ArrayList<>();
-
+    //存放每行的宽度集合
+    List<Integer> lineWidthList = new ArrayList<>();
     //布局方向
     private int mGravity;
     //布局方向常量
@@ -176,6 +177,9 @@ public class TagFlowLayout extends ViewGroup {
                 //此行加上child宽后超过控件宽度
                 //开始下一行计算
 
+                //记录这一行的宽度，在使用布局方向时使用
+                lineWidthList.add(lineWidth);
+
                 //清空行宽，重新计算
                 lineWidth = 0;
                 //计算行高
@@ -193,15 +197,33 @@ public class TagFlowLayout extends ViewGroup {
         }
         allLineViewList.add(lineViewList);
 
+        //记录这一行的宽度，在使用布局方向时使用
+        lineWidthList.add(lineWidth);
+
         //view左上角位置
-        int leftDimension;
+        int leftDimension = getPaddingLeft();
         int topDimension = getPaddingTop();
 
         //遍历所有行集合
         for (int j = 0; j < allLineViewList.size(); j++) {
             //获取行view集合
             lineViewList = allLineViewList.get(j);
-            leftDimension = getPaddingLeft();
+            int currentLineWidth;
+            switch (mGravity) {
+                case LEFT://item靠左布局
+                    leftDimension = getPaddingLeft();
+                    break;
+                case CENTER://item居中布局
+                    currentLineWidth = lineWidthList.get(j);
+                    leftDimension = (width-currentLineWidth)/2;
+                    break;
+                case RIGHT://item靠右布局
+                    currentLineWidth = lineWidthList.get(j);
+                    leftDimension = width - getPaddingRight() - currentLineWidth;
+                    break;
+            }
+            currentLineWidth = lineWidthList.get(j);
+            leftDimension = (width-currentLineWidth)/2;
             //遍历行行view集合
             for (int k = 0; k < lineViewList.size(); k++) {
                 View child = lineViewList.get(k);
@@ -224,8 +246,7 @@ public class TagFlowLayout extends ViewGroup {
     }
 
 
-
-//--------------------------------设置LayoutParams------------------------------------------
+    //--------------------------------设置LayoutParams------------------------------------------
     @Override
     public LayoutParams generateLayoutParams(AttributeSet attrs) {
         return new MarginLayoutParams(getContext(), attrs);

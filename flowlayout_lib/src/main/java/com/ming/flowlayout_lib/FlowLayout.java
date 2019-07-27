@@ -63,13 +63,13 @@ public class FlowLayout extends TagFlowLayout
 
     @Override
     public void onChanged() {
-        addView();
+        dataViewChange();
     }
 
     /**
      * 将view加入flowlayout
      */
-    private void addView() {
+    private void dataViewChange() {
         removeAllViews();
         int itemCount = flowlayoutAdapter.getCount();
         for (int i = 0; i < itemCount; i++) {
@@ -101,10 +101,12 @@ public class FlowLayout extends TagFlowLayout
             itemView.addView(view);
             //将itemview放入flowlayout中
             addView(itemView);
+
             //设置预选中状态
             if (checkedItemSet.contains(i)){
                 itemView.setChecked(true);
             }
+
             //为itemview设置点击监听
             final int position = i;
             itemView.setOnClickListener(new OnClickListener() {
@@ -294,7 +296,7 @@ public class FlowLayout extends TagFlowLayout
     public void commit() {
         //绑定数据变化监听
         flowlayoutAdapter.setOnDataChangedListener(this);
-        addView();
+        dataViewChange();
     }
 //--------------------------------------操作方法------------------------------------------------------
 
