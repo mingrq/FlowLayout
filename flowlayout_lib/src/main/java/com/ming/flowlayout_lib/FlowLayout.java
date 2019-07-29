@@ -21,12 +21,12 @@ public class FlowLayout extends TagFlowLayout
     private int marginRight;
     //item下间距
     private int marginBottom;
-    //可选中item数量
-    private int countAble;
     //单选
-    private static final int SINGLECHOICE = 1;
+    public static final int SINGLECHOICE = 1;
     //多选
-    private static final int MULTIPLECHOICE = 0;
+    public static final int MULTIPLECHOICE = 0;
+    //可选中item数量
+    private int maxCheckCount = SINGLECHOICE;
     //数据集合
     private List dataList;
     //item点击监听
@@ -38,6 +38,9 @@ public class FlowLayout extends TagFlowLayout
     private Context context;
     //item选中下标集合
     Set<Integer> checkedItemSet = new HashSet<>();
+
+    //是否激活选择功能
+    private boolean checkedEnable = true;
 
     //布局方向
     private int mGravity;
@@ -88,10 +91,10 @@ public class FlowLayout extends TagFlowLayout
                 MarginLayoutParams mlp = new MarginLayoutParams(
                         LayoutParams.WRAP_CONTENT,
                         LayoutParams.WRAP_CONTENT);
-                mlp.setMargins(dp2px(0),
-                        dp2px(0),
-                        dp2px(0),
-                        dp2px(0));
+                mlp.setMargins(marginLeft,
+                        marginTop,
+                        marginRight,
+                        marginBottom);
                 itemView.setLayoutParams(mlp);
             }
             //重写为view设置布局参数，使之与item大小相同
@@ -103,9 +106,10 @@ public class FlowLayout extends TagFlowLayout
             addView(itemView);
 
             //设置预选中状态
-            if (checkedItemSet.contains(i)){
-                itemView.setChecked(true);
-            }
+            if (checkedEnable)//是否激活选择功能
+                if (checkedItemSet.contains(i)) {
+                    itemView.setChecked(true);
+                }
 
             //为itemview设置点击监听
             final int position = i;
@@ -116,7 +120,8 @@ public class FlowLayout extends TagFlowLayout
                     if (onItemClickLienter != null)
                         onItemClickLienter.onClick(position, itemView, FlowLayout.this);
                     //处理选中的item点击事件
-                    doChecked(itemView, position);
+                    if (checkedEnable)//是否激活选择功能
+                        doChecked(itemView, position);
                 }
             });
         }
@@ -134,6 +139,20 @@ public class FlowLayout extends TagFlowLayout
             setChildUnChecked(itemView, postion);
         } else {
             //未选中状态，设置成选中状态
+
+            if (maxCheckCount == SINGLECHOICE && checkedItemSet.size() >= SINGLECHOICE) {
+                //单选
+
+                //获取集合中选中的item的下标
+                Integer itemindex = checkedItemSet.iterator().next();
+                //获取item
+                ItemView checkItem = (ItemView) getChildAt(itemindex);
+                setChildUnChecked(checkItem, itemindex);
+            } else if (maxCheckCount != MULTIPLECHOICE && checkedItemSet.size() == maxCheckCount) {
+                //多选--规定数量
+
+                return;
+            }
             setChildChecked(itemView, postion);
         }
         if (onItemCheckedChangeLisenter != null)
@@ -213,7 +232,6 @@ public class FlowLayout extends TagFlowLayout
      */
     public TagFlowLayout setAdapter(FlowlayoutAdapter flowlayoutAdapter) {
         this.flowlayoutAdapter = flowlayoutAdapter;
-
         return this;
     }
 
@@ -236,22 +254,36 @@ public class FlowLayout extends TagFlowLayout
     }
 
     /**
+     * 是否激活选择功能
+     *
+     * @param checkedEnable
+     */
+    public void setCheckedEnable(boolean checkedEnable) {
+        this.checkedEnable = checkedEnable;
+    }
+
+    /**
      * 设置选择状态
      * --多选|单选|限制数量
      *
-     * @param countAble
+     * @param maxCheckCount 最大选中数量
+     * @param position      预选中下标
      * @return
      */
-    public TagFlowLayout setMaxSelectCount(int countAble) throws InputException {
-        if (countAble == 1) {//单选
-            this.countAble = SINGLECHOICE;
-        } else if (countAble == 0) {//多选
-            this.countAble = MULTIPLECHOICE;
-        } else if (countAble > 1) {//限制数量
-            this.countAble = countAble;
-        } else {
-            //输入错误
-            throw new InputException();
+    public TagFlowLayout setMaxCheckCount(int maxCheckCount, int... position) throws MaxCheckedInputException {
+        this.maxCheckCount = maxCheckCount;
+
+        //获取预选中的下标数组
+        int[] reserveChecked = position;
+        //遍历数组
+        for (int p : reserveChecked) {
+            checkedItemSet.add(p);
+        }
+
+        //判断与选定数量是否超出可选数量，超出报错
+        if (checkedItemSet.size() > maxCheckCount) {
+            MaxCheckedInputException exception = new MaxCheckedInputException();
+            throw exception;
         }
         return this;
     }
@@ -279,24 +311,13 @@ public class FlowLayout extends TagFlowLayout
     }
 
     /**
-     * 设置预选中
-     */
-    public void setReserveCheckedList(int... position) {
-        //获取预选中的下标数组
-        int[] reserveChecked = position;
-        //遍历数组
-        for (int p : reserveChecked) {
-            checkedItemSet.add(p);
-        }
-    }
-
-    /**
      * 提交
      */
     public void commit() {
         //绑定数据变化监听
         flowlayoutAdapter.setOnDataChangedListener(this);
         dataViewChange();
+
     }
 //--------------------------------------操作方法------------------------------------------------------
 
@@ -308,5 +329,4 @@ public class FlowLayout extends TagFlowLayout
     public Set<Integer> getCheckedSet() {
         return checkedItemSet;
     }
-
 }

@@ -2,11 +2,17 @@ package com.ming.flowlayout;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.ming.flowlayout_lib.FlowLayout;
+import com.ming.flowlayout_lib.ItemView;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.ming.flowlayout_lib.FlowLayout.SINGLECHOICE;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,22 +34,27 @@ public class MainActivity extends AppCompatActivity {
         flowLayout.setOnItemCheckedChangeLisenter(new FlowLayout.OnItemCheckedChangeLisenter() {
             @Override
             public void onCheckedChange(int position, boolean isChecked) {
-                Toast.makeText(getBaseContext(),"onCheckedChange: "+position,Toast.LENGTH_SHORT).show();
+                Log.e("onCheckedChange", String.valueOf(position));
             }
 
             @Override
             public void onChecked(int position) {
-                Toast.makeText(getBaseContext(),"onChecked: "+position,Toast.LENGTH_SHORT).show();
-
+                Log.e("onChecked", String.valueOf(position));
             }
 
             @Override
             public void onUnChecked(int position) {
-                Toast.makeText(getBaseContext(),"onUnChecked: "+position,Toast.LENGTH_SHORT).show();
-
+                Log.e("onUnChecked", String.valueOf(position));
             }
         });
-        flowLayout.setReserveCheckedList(0,2,5);
+        flowLayout.setOnItemClickLienter(new FlowLayout.OnItemClickLienter() {
+            @Override
+            public void onClick(int position, ItemView itemView, FlowLayout flowLayout) {
+                Log.e("onClick", String.valueOf(position));
+            }
+        });
+       // flowLayout.setCheckedEnable(false);
+        flowLayout.setMaxCheckCount(SINGLECHOICE,0);
         flowLayout.commit();
     }
 }

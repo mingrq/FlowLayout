@@ -12,25 +12,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class TagFlowLayout extends ViewGroup {
-    //item
-    private View itemView;
-    //水平间距
-    private int horizontalMargin;
-    //垂直间距
-    private int verticalMargin;
-    //可选中item数量
-    private int countAble;
-    //单选
-    private static final int SINGLECHOICE = 1;
-    //多选
-    private static final int MULTIPLECHOICE = 0;
-    //数据集合
-    private List dataList;
 
-    //item选择集合
-    private List<Integer> selectList;
-    //adapter
-    private FlowlayoutAdapter flowlayoutAdapter;
+
     private Context context;
 
     //单行view集合
@@ -58,14 +41,9 @@ public class TagFlowLayout extends ViewGroup {
         super(context, attrs, defStyleAttr);
         this.context = context;
 
-        //初始化item选择集合
-        selectList = new ArrayList<>();
 
         //获取自定义属性
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FlowLayout);
-
-        //获取最大可选数量
-        countAble = typedArray.getInt(R.styleable.FlowLayout_max_select, SINGLECHOICE);
 
         //获取布局方向
         mGravity = typedArray.getInt(R.styleable.FlowLayout_tag_gravity, LEFT);
