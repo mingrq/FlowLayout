@@ -3,15 +3,16 @@ package com.ming.flowlayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.ming.flowlayout_lib.FlowLayout;
 import com.ming.flowlayout_lib.ItemView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
-import static com.ming.flowlayout_lib.FlowLayout.SINGLECHOICE;
+import static com.ming.flowlayout_lib.FlowLayout.MULTIPLECHOICE;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -53,8 +54,19 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("onClick", String.valueOf(position));
             }
         });
-       // flowLayout.setCheckedEnable(false);
-        flowLayout.setMaxCheckCount(SINGLECHOICE,0);
+        flowLayout.setCheckedEnable(true);
+        flowLayout.setMaxCheckCount(MULTIPLECHOICE,null);
+        flowLayout.setItemMargin(flowLayout.dp2px(10),19,15,50);
         flowLayout.commit();
+
+        Timer timer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+
+                Log.e("ch",  flowLayout.getCheckedSet().toString());
+            }
+        };
+        timer.schedule(timerTask,6000);
     }
 }

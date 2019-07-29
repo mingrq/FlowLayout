@@ -22,12 +22,10 @@ public class TagFlowLayout extends ViewGroup {
     List<List<View>> allLineViewList = new ArrayList<>();
     //存放每行的宽度集合
     List<Integer> lineWidthList = new ArrayList<>();
+
     //布局方向
     private int mGravity;
-    //布局方向常量
-    private static final int LEFT = -1;
-    private static final int CENTER = 0;
-    private static final int RIGHT = 1;
+
 
     public TagFlowLayout(Context context) {
         this(context, null);
@@ -46,7 +44,7 @@ public class TagFlowLayout extends ViewGroup {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FlowLayout);
 
         //获取布局方向
-        mGravity = typedArray.getInt(R.styleable.FlowLayout_tag_gravity, LEFT);
+        mGravity = typedArray.getInt(R.styleable.FlowLayout_tag_gravity, -1);
 
         typedArray.recycle();
     }
@@ -188,20 +186,18 @@ public class TagFlowLayout extends ViewGroup {
             lineViewList = allLineViewList.get(j);
             int currentLineWidth;
             switch (mGravity) {
-                case LEFT://item靠左布局
+                case -1://item靠左布局
                     leftDimension = getPaddingLeft();
                     break;
-                case CENTER://item居中布局
+                case 0://item居中布局
                     currentLineWidth = lineWidthList.get(j);
-                    leftDimension = (width-currentLineWidth)/2;
+                    leftDimension = (width - currentLineWidth) / 2;
                     break;
-                case RIGHT://item靠右布局
+                case 1://item靠右布局
                     currentLineWidth = lineWidthList.get(j);
                     leftDimension = width - getPaddingRight() - currentLineWidth;
                     break;
             }
-            currentLineWidth = lineWidthList.get(j);
-            leftDimension = (width-currentLineWidth)/2;
             //遍历行行view集合
             for (int k = 0; k < lineViewList.size(); k++) {
                 View child = lineViewList.get(k);
@@ -223,6 +219,26 @@ public class TagFlowLayout extends ViewGroup {
         }
     }
 
+    /**
+     * 设置布局位置
+     *
+     * @param layoutGravity
+     * @return
+     */
+    public TagFlowLayout setGravity(LayoutGravity layoutGravity) {
+        switch (layoutGravity) {
+            case LEFT:
+                this.mGravity = -1;
+                break;
+            case CENTER:
+                this.mGravity = 0;
+                break;
+            case RIGHT:
+                this.mGravity = 1;
+                break;
+        }
+        return this;
+    }
 
     //--------------------------------设置LayoutParams------------------------------------------
     @Override

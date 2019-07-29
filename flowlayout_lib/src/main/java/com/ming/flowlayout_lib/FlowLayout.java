@@ -11,8 +11,6 @@ import java.util.Set;
 
 public class FlowLayout extends TagFlowLayout
         implements FlowlayoutAdapter.OnDataChangedListener {
-    //item
-    private View itemView;
     //item左间距
     private int marginLeft;
     //item上间距
@@ -27,8 +25,6 @@ public class FlowLayout extends TagFlowLayout
     public static final int MULTIPLECHOICE = 0;
     //可选中item数量
     private int maxCheckCount = SINGLECHOICE;
-    //数据集合
-    private List dataList;
     //item点击监听
     private OnItemClickLienter onItemClickLienter;
     //item选择监听
@@ -41,13 +37,9 @@ public class FlowLayout extends TagFlowLayout
 
     //是否激活选择功能
     private boolean checkedEnable = true;
+    //是否使用设置的item的margin
+    private boolean isItemMarginEnable = false;
 
-    //布局方向
-    private int mGravity;
-    //布局方向常量
-    private static final int LEFT = -1;
-    private static final int CENTER = 0;
-    private static final int RIGHT = 1;
 
     public FlowLayout(Context context) {
         this(context, null);
@@ -84,7 +76,9 @@ public class FlowLayout extends TagFlowLayout
             view.setDuplicateParentStateEnabled(true);
             //因为itemview使用了控件状态传递功能，将view的clicked设置成false
             view.setClickable(false);
-            if (view.getLayoutParams() != null && view.getLayoutParams() instanceof MarginLayoutParams) {
+            if (!isItemMarginEnable && view.getLayoutParams() != null && view.getLayoutParams() instanceof MarginLayoutParams) {
+                //在没有设置item的margin值 并且view的布局参数不为空 并且 布局参数是MarginLayoutParams的子类
+
                 //将view的布局参数赋予itemview
                 itemView.setLayoutParams(view.getLayoutParams());
             } else {
@@ -190,13 +184,7 @@ public class FlowLayout extends TagFlowLayout
             onItemCheckedChangeLisenter.onUnChecked(postion);
     }
 
-    /**
-     * dp转px
-     */
-    public int dp2px(float dpValues) {
-        dpValues = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValues, context.getResources().getDisplayMetrics());
-        return (int) (dpValues + 0.5f);
-    }
+
 
     //----------------------------------------监听器-----------------------------------------
 
@@ -236,8 +224,18 @@ public class FlowLayout extends TagFlowLayout
     }
 
     /**
+     * 设置布局方向
+     *
+     * @param layoutGravity
+     * @return
+     */
+    public FlowLayout setGravity(LayoutGravity layoutGravity) {
+        super.setGravity(layoutGravity);
+        return this;
+    }
+
+    /**
      * 设置默认间距
-     * --在item没有设置mragin时使用默认间距
      *
      * @param marginLeft   左间距
      * @param marginTop    上间距
@@ -245,7 +243,10 @@ public class FlowLayout extends TagFlowLayout
      * @param marginBottom 下间距
      * @return
      */
-    public FlowLayout setItemDefultMargin(int marginLeft, int marginTop, int marginRight, int marginBottom) {
+    public FlowLayout setItemMargin(int marginLeft, int marginTop, int marginRight, int marginBottom) {
+        //使用设置的参数作为item的margin值
+        isItemMarginEnable = true;
+
         this.marginLeft = marginLeft;
         this.marginTop = marginTop;
         this.marginRight = marginRight;
@@ -272,19 +273,21 @@ public class FlowLayout extends TagFlowLayout
      */
     public TagFlowLayout setMaxCheckCount(int maxCheckCount, int... position) throws MaxCheckedInputException {
         this.maxCheckCount = maxCheckCount;
+        if (position != null) {
+            //获取预选中的下标数组
+            int[] reserveChecked = position;
+            //遍历数组
+            for (int p : reserveChecked) {
+                checkedItemSet.add(p);
+            }
 
-        //获取预选中的下标数组
-        int[] reserveChecked = position;
-        //遍历数组
-        for (int p : reserveChecked) {
-            checkedItemSet.add(p);
+            //判断与选定数量是否超出可选数量，超出报错
+            if (checkedItemSet.size() > maxCheckCount) {
+                MaxCheckedInputException exception = new MaxCheckedInputException();
+                throw exception;
+            }
         }
 
-        //判断与选定数量是否超出可选数量，超出报错
-        if (checkedItemSet.size() > maxCheckCount) {
-            MaxCheckedInputException exception = new MaxCheckedInputException();
-            throw exception;
-        }
         return this;
     }
 
@@ -319,6 +322,15 @@ public class FlowLayout extends TagFlowLayout
         dataViewChange();
 
     }
+
+    /**
+     * dp转px
+     */
+    public int dp2px(float dpValues) {
+        dpValues = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValues, context.getResources().getDisplayMetrics());
+        return (int) (dpValues + 0.5f);
+    }
+
 //--------------------------------------操作方法------------------------------------------------------
 
     /**
