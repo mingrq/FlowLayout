@@ -222,21 +222,11 @@ public class TagFlowLayout extends ViewGroup {
     /**
      * 设置布局位置
      *
-     * @param layoutGravity
+     * @param mGravity
      * @return
      */
-    public TagFlowLayout setGravity(LayoutGravity layoutGravity) {
-        switch (layoutGravity) {
-            case LEFT:
-                this.mGravity = -1;
-                break;
-            case CENTER:
-                this.mGravity = 0;
-                break;
-            case RIGHT:
-                this.mGravity = 1;
-                break;
-        }
+    public TagFlowLayout setGravity(int mGravity) {
+        this.mGravity = mGravity;
         return this;
     }
 

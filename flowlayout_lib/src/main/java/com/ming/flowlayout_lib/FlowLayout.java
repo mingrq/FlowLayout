@@ -35,6 +35,11 @@ public class FlowLayout extends TagFlowLayout
     //item选中下标集合
     Set<Integer> checkedItemSet = new HashSet<>();
 
+    //布局方向常量
+    public static final int LEFT = -1;
+    public static final int CENTER = 0;
+    public static final int RIGHT = 1;
+
     //是否激活选择功能
     private boolean checkedEnable = true;
     //是否使用设置的item的margin
@@ -185,7 +190,6 @@ public class FlowLayout extends TagFlowLayout
     }
 
 
-
     //----------------------------------------监听器-----------------------------------------
 
     /**
@@ -207,7 +211,6 @@ public class FlowLayout extends TagFlowLayout
         void onUnChecked(int position);
     }
 
-
     /*--------------------------------------------------对外方法-----------------------------------------------------*/
     //-----------------------------初始化方法---------------------------------------
 
@@ -226,11 +229,11 @@ public class FlowLayout extends TagFlowLayout
     /**
      * 设置布局方向
      *
-     * @param layoutGravity
+     * @param gravity 布局方向 LEFT CENTER RIGHT
      * @return
      */
-    public FlowLayout setGravity(LayoutGravity layoutGravity) {
-        super.setGravity(layoutGravity);
+    public FlowLayout setGravity(int gravity) {
+        super.setGravity(gravity);
         return this;
     }
 

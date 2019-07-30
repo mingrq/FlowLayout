@@ -13,6 +13,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import static com.ming.flowlayout_lib.FlowLayout.MULTIPLECHOICE;
+import static com.ming.flowlayout_lib.FlowLayout.RIGHT;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         flowLayout.setCheckedEnable(true);
+        flowLayout.setGravity(RIGHT);
         flowLayout.setMaxCheckCount(MULTIPLECHOICE,null);
         flowLayout.setItemMargin(flowLayout.dp2px(10),19,15,50);
         flowLayout.commit();
