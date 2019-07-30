@@ -1,6 +1,7 @@
 package com.ming.flowlayout_lib;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
@@ -45,6 +46,8 @@ public class FlowLayout extends TagFlowLayout
     //是否使用设置的item的margin
     private boolean isItemMarginEnable = false;
 
+    //布局方向
+    private int mGravity;
 
     public FlowLayout(Context context) {
         this(context, null);
@@ -59,6 +62,18 @@ public class FlowLayout extends TagFlowLayout
         this.context = context;
         //初始清空集合
         checkedItemSet.clear();
+
+
+        //获取自定义属性
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FlowLayout);
+
+        //获取布局方向
+        mGravity = typedArray.getInt(R.styleable.FlowLayout_tag_gravity, -1);
+        //设置布局方向
+        setGravity(mGravity);
+
+        //回收属性集合
+        typedArray.recycle();
     }
 
     @Override

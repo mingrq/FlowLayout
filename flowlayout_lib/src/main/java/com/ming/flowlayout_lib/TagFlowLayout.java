@@ -40,13 +40,6 @@ public class TagFlowLayout extends ViewGroup {
         this.context = context;
 
 
-        //获取自定义属性
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FlowLayout);
-
-        //获取布局方向
-        mGravity = typedArray.getInt(R.styleable.FlowLayout_tag_gravity, -1);
-
-        typedArray.recycle();
     }
 
     @Override

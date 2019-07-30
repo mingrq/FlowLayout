@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
             jd.add("test" + (i + 1));
         }
         TestAdapter testAdapter = new TestAdapter(getBaseContext());
-        testAdapter.setDatas(jd);
+
         flowLayout.setAdapter(testAdapter);
         flowLayout.setOnItemCheckedChangeLisenter(new FlowLayout.OnItemCheckedChangeLisenter() {
             @Override
@@ -60,7 +60,8 @@ public class MainActivity extends AppCompatActivity {
         flowLayout.setMaxCheckCount(MULTIPLECHOICE,null);
         flowLayout.setItemMargin(flowLayout.dp2px(10),19,15,50);
         flowLayout.commit();
-
+        testAdapter.setDatas(jd);
+        testAdapter.notifyDataChanged();
         Timer timer = new Timer();
         TimerTask timerTask = new TimerTask() {
             @Override
