@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:as="http://schemas.android.com/apk/res-auto">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -13,6 +15,7 @@
 
             <com.ming.flowlayout_lib.FlowLayout
                 android:id="@+id/ii"
+                as:flow_gravity = "center"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </RelativeLayout>

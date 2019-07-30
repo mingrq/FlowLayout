@@ -68,7 +68,10 @@ public class FlowLayout extends TagFlowLayout
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FlowLayout);
 
         //获取布局方向
-        mGravity = typedArray.getInt(R.styleable.FlowLayout_tag_gravity, -1);
+        mGravity = typedArray.getInt(R.styleable.FlowLayout_flow_gravity, -1);
+
+        //获取最大可选择的数量，默认单选
+        maxCheckCount=typedArray.getInt(R.styleable.FlowLayout_max_select,SINGLECHOICE);
         //设置布局方向
         setGravity(mGravity);
 
@@ -165,6 +168,7 @@ public class FlowLayout extends TagFlowLayout
             } else if (maxCheckCount != MULTIPLECHOICE && checkedItemSet.size() == maxCheckCount) {
                 //多选--规定数量
 
+                //选中数量到达设置数量，不进行操作了
                 return;
             }
             setChildChecked(itemView, postion);

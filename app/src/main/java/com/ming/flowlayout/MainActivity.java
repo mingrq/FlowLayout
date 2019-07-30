@@ -56,8 +56,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         flowLayout.setCheckedEnable(true);
-        flowLayout.setGravity(RIGHT);
-        flowLayout.setMaxCheckCount(MULTIPLECHOICE,null);
+        //flowLayout.setGravity(RIGHT);
+        //flowLayout.setMaxCheckCount(MULTIPLECHOICE,null);
         flowLayout.setItemMargin(flowLayout.dp2px(10),19,15,50);
         flowLayout.commit();
         testAdapter.setDatas(jd);
