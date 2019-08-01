@@ -283,8 +283,9 @@ public class FlowLayout extends TagFlowLayout
      *
      * @param checkedEnable
      */
-    public void setCheckedEnable(boolean checkedEnable) {
+    public TagFlowLayout setCheckedEnable(boolean checkedEnable) {
         this.checkedEnable = checkedEnable;
+        return this;
     }
 
     /**
