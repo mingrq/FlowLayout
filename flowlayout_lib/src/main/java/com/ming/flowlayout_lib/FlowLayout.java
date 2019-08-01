@@ -72,6 +72,8 @@ public class FlowLayout extends TagFlowLayout
 
         //获取最大可选择的数量，默认单选
         maxCheckCount=typedArray.getInt(R.styleable.FlowLayout_max_select,SINGLECHOICE);
+        //获取是否激活选中功能
+        setCheckedEnable(typedArray.getBoolean(R.styleable.FlowLayout_isCheckedEnable,true));
         //设置布局方向
         setGravity(mGravity);
 
