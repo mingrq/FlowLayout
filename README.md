@@ -1,5 +1,5 @@
 # 最新版本
- 1.0.0
+ 2.0.0
 
 #
 
@@ -88,17 +88,17 @@ flowlayoutAdapter：适配器实例
 ```
 
 #
-### TagFlowLayout setCheckedEnable(boolean checkedEnable)
+### TagFlowLayout setSelectedEnable(boolean selectedEnable)
 是否激活选择功能
 ```
 如果设置为  true，则可使用选中功能与点击功能，反之只能使用点击功能而无法使用 getCheckedSet() 方法
 ```
 
 #
-### TagFlowLayout setMaxCheckCount(int maxCheckCount, int... position)
+### TagFlowLayout setMaxSelectedCount(int maxSelectedCount, int... position)
 设置选择状态
 ```
-maxCheckCount: 最多可选中的数量 默认为单选
+maxSelectedCount: 最多可选中的数量 默认为单选
     可设置：
       SINGLECHOICE：单选
       MULTIPLECHOICE：多选，不限数量
@@ -108,7 +108,7 @@ position：预选中的item下标
 此功能对应 XML 属性为 flow:max_select = SINGLECHOICE | MULTIPLECHOICE | 大于1的自然整数
 
 #
-### TagFlowLayout setOnItemClickLienter(OnItemClickLienter onItemClickLienter)
+### TagFlowLayout setOnItemSelectedLienter(OnItemClickLienter onItemClickLienter)
 设置item点击监听
 ```
 flowLayout.setOnItemClickLienter(new FlowLayout.OnItemClickLienter() {
@@ -125,13 +125,13 @@ flowLayout.setOnItemClickLienter(new FlowLayout.OnItemClickLienter() {
 ```
 
 #
-### TagFlowLayout setOnItemCheckedChangeLisenter(OnItemCheckedChangeLisenter onItemCheckedChangeLisenter)
-设置item选择监听，如果设置 setCheckedEnable(boolean checkedEnable) 方法为false时，此监听无效
+### TagFlowLayout setOnItemSelectedChangeLisenter(OnItemSelectedChangeLisenter onItemSelectedChangeLisenter)
+设置item选择监听，如果设置 setSelectedEnable(boolean selectedEnable) 方法为false时，此监听无效
 ```
-flowLayout.setOnItemCheckedChangeLisenter(new FlowLayout.OnItemCheckedChangeLisenter() {
+flowLayout.setOnItemSelectedChangeLisenter(new FlowLayout.OnItemSelectedChangeLisenter() {
             @Override
-            public void onCheckedChange(int position, boolean isChecked) {
-                Log.e("onCheckedChange", String.valueOf(position));
+            public void onSelectedChange(int position, boolean isSelected) {
+                Log.e("onSelectedChange", String.valueOf(position));
             }
 	    
 	     //参数
@@ -140,16 +140,16 @@ flowLayout.setOnItemCheckedChangeLisenter(new FlowLayout.OnItemCheckedChangeLise
  		//-------------------------------------------------------
 
             @Override
-            public void onChecked(int position) {
-                Log.e("onChecked", String.valueOf(position));
+            public void onSelected(int position) {
+                Log.e("onSelected", String.valueOf(position));
             }
 	    
 	     //参数
 	       //position：当前点击的item下标
 	       //-------------------------------------------------------
             @Override
-            public void onUnChecked(int position) {
-                Log.e("onUnChecked", String.valueOf(position));
+            public void onUnSelected(int position) {
+                Log.e("onUnSelected", String.valueOf(position));
             }
 	    
 	     //参数
@@ -162,7 +162,7 @@ flowLayout.setOnItemCheckedChangeLisenter(new FlowLayout.OnItemCheckedChangeLise
 提交  执行此方法后以上设置才有效
 
 #
-### Set<Integer> getCheckedSet()
+### Set<Integer> getSelectedSet()
 获取item选择集合
 	
 #
