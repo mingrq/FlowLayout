@@ -3,9 +3,9 @@ package com.ming.flowlayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import com.ming.flowlayout_lib.FlowLayout;
-import com.ming.flowlayout_lib.ItemView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,31 +33,31 @@ public class MainActivity extends AppCompatActivity {
         TestAdapter testAdapter = new TestAdapter(getBaseContext());
 
         flowLayout.setAdapter(testAdapter);
-        flowLayout.setOnItemCheckedChangeLisenter(new FlowLayout.OnItemCheckedChangeLisenter() {
+        flowLayout.setOnItemSelectedChangeLisenter(new FlowLayout.OnItemSelectedChangeLisenter() {
             @Override
-            public void onCheckedChange(int position, boolean isChecked) {
+            public void onSelectedChange(int position, boolean isChecked) {
                 Log.e("onCheckedChange", String.valueOf(position));
             }
 
             @Override
-            public void onChecked(int position) {
+            public void onSelected(int position) {
                 Log.e("onChecked", String.valueOf(position));
             }
 
             @Override
-            public void onUnChecked(int position) {
+            public void onUnSelected(int position) {
                 Log.e("onUnChecked", String.valueOf(position));
             }
         });
         flowLayout.setOnItemClickLienter(new FlowLayout.OnItemClickLienter() {
             @Override
-            public void onClick(int position, ItemView itemView, FlowLayout flowLayout) {
+            public void onClick(int position, View itemView, FlowLayout flowLayout) {
                 Log.e("onClick", String.valueOf(position));
             }
         });
-        flowLayout.setCheckedEnable(true);
-        //flowLayout.setGravity(RIGHT);
-        //flowLayout.setMaxCheckCount(MULTIPLECHOICE,null);
+        flowLayout.setSelectedEnable(true);
+        flowLayout.setGravity(RIGHT);
+        flowLayout.setMaxSelectedCount(MULTIPLECHOICE,3);
         flowLayout.setItemMargin(flowLayout.dp2px(10),19,15,50);
         flowLayout.commit();
         testAdapter.setDatas(jd);
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
 
-                Log.e("ch",  flowLayout.getCheckedSet().toString());
+                Log.e("ch",  flowLayout.getSelectedSet().toString());
             }
         };
         timer.schedule(timerTask,6000);

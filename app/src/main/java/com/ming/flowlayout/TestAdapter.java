@@ -43,7 +43,7 @@ public class TestAdapter extends FlowlayoutAdapter {
         TextView textView = (TextView) LayoutInflater.from(context).inflate(R.layout.item,
                 parent, false);
         //TextView textView = new TextView(context);
-        textView.setTextColor(Color.BLACK);
+        //textView.setTextColor(Color.BLACK);
         //textView.setBackgroundColor(Color.RED);
         textView.setText(mTagDatas.get(position));
         /*ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
